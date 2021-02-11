@@ -14,6 +14,7 @@ def home():
 @app.route('/login',methods=['GET','POST'])
 def login_usuario():
     data = request.json
+    #Hacer aqui la validacion de usuario y contraseña
     # if request.method == 'POST':
     #     request
     # else:
