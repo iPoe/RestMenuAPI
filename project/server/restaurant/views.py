@@ -95,9 +95,11 @@ class RecursoUnRestaurante(Resource):
     def post(sel,id_restaurante):
         auth_header = request.headers.get('Authorization')
         auth_token = get_token(auth_header)
-         if auth_token:
+        if auth_token:
+            data = request.form
+            nombre = data['nombre']
             file = request.files['file']
-            filename = "testfile"
+            print(nombre)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
         else:
             responseObject = {
@@ -105,7 +107,7 @@ class RecursoUnRestaurante(Resource):
                 'message': 'acceso denegado!, inicia sesion para adquirir permisos'
             }
             return make_response(jsonify(responseObject))
-            
+
         return make_response(jsonify("Menu subido!"))
 
         
