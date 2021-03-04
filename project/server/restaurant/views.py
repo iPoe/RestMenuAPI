@@ -93,10 +93,19 @@ class RecursoUnRestaurante(Resource):
             }
             return make_response(jsonify(responseObject))
     def post(sel,id_restaurante):
-        print(id_restaurante)
-        file = request.files['file']
-        filename = "testfile"
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        auth_header = request.headers.get('Authorization')
+        auth_token = get_token(auth_header)
+         if auth_token:
+            file = request.files['file']
+            filename = "testfile"
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        else:
+            responseObject = {
+                'status': 'Error',
+                'message': 'acceso denegado!, inicia sesion para adquirir permisos'
+            }
+            return make_response(jsonify(responseObject))
+            
         return make_response(jsonify("Menu subido!"))
 
         
@@ -124,9 +133,6 @@ class RecursoUnRestaurante(Resource):
             if 'domicilio' in request.json:
                 restaurante.domicilio = request.json['domicilio']
 
-            #Capturar la imagen del menu
-            
-            #restaurante.menu = filename
             
             db.session.commit()
             return post_schema.dump(restaurante)
