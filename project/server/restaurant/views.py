@@ -7,9 +7,9 @@ from project.server import db, api, app
 from project.server.models import Restaurante, User, BlacklistToken
 from flask_restful import Resource
 import jwt
+import os
 from flask_marshmallow import Marshmallow
 from sqlalchemy import desc
-
 
 ma = Marshmallow(app)
 
@@ -92,6 +92,14 @@ class RecursoUnRestaurante(Resource):
                 'message': 'acceso denegado!, inicia sesion para adquirir permisos'
             }
             return make_response(jsonify(responseObject))
+    def post(sel,id_restaurante):
+        print(id_restaurante)
+        file = request.files['file']
+        filename = "testfile"
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        return make_response(jsonify("Menu subido!"))
+
+        
 
     def put(self, id_restaurante):
         auth_header = request.headers.get('Authorization')
@@ -115,6 +123,10 @@ class RecursoUnRestaurante(Resource):
                 restaurante.menu = request.json['menu']
             if 'domicilio' in request.json:
                 restaurante.domicilio = request.json['domicilio']
+
+            #Capturar la imagen del menu
+            
+            #restaurante.menu = filename
             
             db.session.commit()
             return post_schema.dump(restaurante)
