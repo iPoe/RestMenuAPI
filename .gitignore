@@ -8,3 +8,4 @@ menus_logos_restaurantes/kissclipart-federal-government-vector-clipart-governmen
 settings.env
 .env
 project/server/.flaskenv
+env/
