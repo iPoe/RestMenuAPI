@@ -14,7 +14,6 @@ UPLOAD_FOLDER = join(dirname(realpath(__file__)), '../../menus_logos_restaurante
 
 
 load_dotenv()
-UPLOAD_FOLDER = '/media/leonardo/HardDisk1/9/Tec Emergentes/TAREA1/RestMenuAPI/menus_logos_restaurantes'
 
 
 #Cargar las variables de entorno
