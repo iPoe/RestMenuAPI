@@ -1,6 +1,7 @@
 # project/server/__init__.py
+from os import getenv
 
-import os
+from dotenv import load_dotenv
 
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
@@ -8,37 +9,29 @@ from flask_restful import Api, Resource
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
-import sqlalchemy
-#...
 
-# load dotenv in the base root
-APP_ROOT = os.path.join(os.path.dirname(__file__), '..')   # refers to application_top
-dotenv_path = os.path.join(APP_ROOT, '.env')
-load_dotenv(dotenv_path)
+import sqlalchemy
+import os
+
+load_dotenv()
 UPLOAD_FOLDER = '/media/leonardo/HardDisk1/9/Tec Emergentes/TAREA1/RestMenuAPI/menus_logos_restaurantes'
 
 
-
+#Cargar las variables de entorno
 app = Flask(__name__)
+passw = getenv("DB_PASSWORD")
+ip = getenv("DB_IP")
+dbname = getenv("DB_NAME")
+#Url para guardar los datos en gcloud postgres db
+DB_URL = "postgres+psycopg2://postgres:{}@{}/{}".format(passw,ip,dbname)
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///restaurantes_jwt'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'my_precious')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 api = Api(app)
-
-engine = create_engine('postgresql+psycopg2://restaurantes_jwt:Monster14320@localhost:5432/')
-conn = engine.connect()
-Session = sessionmaker(bind=engine)
-session = Session()
-Base = declarative_base()
-
-  
-#db = SQLAlchemy(app)
-
-
+db = SQLAlchemy(app)
 
 from project.server.restaurant.views import RecursoListarRestaurantes, RecursoUnRestaurante
 from project.server.auth.views import RegisterAPI, LoginAPI, LogoutAPI
