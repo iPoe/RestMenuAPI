@@ -5,8 +5,10 @@ import os
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
+from os.path import join, dirname, realpath
 
-UPLOAD_FOLDER = '/media/leonardo/HardDisk1/9/Tec Emergentes/TAREA1/RestMenuAPI/menus_logos_restaurantes'
+UPLOAD_FOLDER = join(dirname(realpath(__file__)), '../../menus_logos_restaurante/')
+
 
 
 

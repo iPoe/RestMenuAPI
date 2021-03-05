@@ -10,6 +10,7 @@ import jwt
 import os
 from flask_marshmallow import Marshmallow
 from sqlalchemy import desc
+import base64
 
 ma = Marshmallow(app)
 
@@ -57,19 +58,26 @@ class RecursoListarRestaurantes(Resource):
         if auth_token:
             token = auth_header.split(" ")[1]
             payload = jwt.decode(token, app.config.get('SECRET_KEY'))
+            logo_r = request.files['logo_rest']
+            logo_r.save(os.path.join(app.config['UPLOAD_FOLDER'], logo_r.filename))
+            logo_m = request.files['menu']
+            logo_m.save(os.path.join(app.config['UPLOAD_FOLDER'], logo_m.filename))
             nuevo_restaurante = Restaurante(
-                nombre = request.json['nombre'],
-                lugar = request.json['lugar'],
-                categoria = request.json['categoria'],
-                direccion = request.json['direccion'],
-                telefono = request.json['telefono'],
-                logo_rest = request.json['logo_rest'],
-                menu = request.json['menu'],
-                domicilio = request.json['domicilio'],
+                nombre = request.form['nombre'],
+                lugar = request.form['lugar'],
+                categoria = request.form['categoria'],
+                direccion = request.form['direccion'],
+                telefono = request.form['telefono'],
+                logo_rest = logo_r.filename,
+                menu = logo_m.filename,
+                domicilio = request.form['domicilio'],
                 user_id = payload['sub']
             )
+          
             db.session.add(nuevo_restaurante)
+          
             db.session.commit()
+           
             return post_schema.dump(nuevo_restaurante)
         else:
             responseObject = {
@@ -92,23 +100,6 @@ class RecursoUnRestaurante(Resource):
                 'message': 'acceso denegado!, inicia sesion para adquirir permisos'
             }
             return make_response(jsonify(responseObject))
-    def post(sel,id_restaurante):
-        auth_header = request.headers.get('Authorization')
-        auth_token = get_token(auth_header)
-        if auth_token:
-            data = request.form
-            nombre = data['nombre']
-            file = request.files['file']
-            print(nombre)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-        else:
-            responseObject = {
-                'status': 'Error',
-                'message': 'acceso denegado!, inicia sesion para adquirir permisos'
-            }
-            return make_response(jsonify(responseObject))
-
-        return make_response(jsonify("Menu subido!"))
 
         
 
@@ -118,22 +109,30 @@ class RecursoUnRestaurante(Resource):
         if auth_token:
 
             restaurante = Restaurante.query.get_or_404(id_restaurante)
-            if 'nombre' in request.json:
-                restaurante.nombre = request.json['nombre']
-            if 'lugar' in request.json:
-                restaurante.lugar = request.json['lugar']
-            if 'categoria' in request.json:
-                restaurante.categoria = request.json['categoria']
-            if 'direccion' in request.json:
-                restaurante.direccion = request.json['direccion']
-            if 'telefono' in request.json:
-                restaurante.telefono = request.json['telefono']
-            if 'logo_rest' in request.json:
-                restaurante.logo_rest = request.json['logo_rest']
-            if 'menu' in request.json:
-                restaurante.menu = request.json['menu']
-            if 'domicilio' in request.json:
-                restaurante.domicilio = request.json['domicilio']
+            if 'nombre' in request.form:
+                restaurante.nombre = request.form['nombre']
+            if 'lugar' in request.form:
+                restaurante.lugar = request.form['lugar']
+            if 'categoria' in request.form:
+                restaurante.categoria = request.form['categoria']
+            if 'direccion' in request.form:
+                restaurante.direccion = request.form['direccion']
+            if 'telefono' in request.form:
+                restaurante.telefono = request.form['telefono']
+            if 'logo_rest' in request.files:
+
+                logo_r = request.files['logo_rest']
+                logo_r.save(os.path.join(app.config['UPLOAD_FOLDER'], logo_r.filename))
+                restaurante.logo_rest = logo_r.filename
+
+            if 'menu' in request.files:
+
+                logo_m = request.files['menu']
+                logo_m.save(os.path.join(app.config['UPLOAD_FOLDER'], logo_m.filename))
+                restaurante.menu = logo_m.filename
+
+            if 'domicilio' in request.form:
+                restaurante.domicilio = request.form['domicilio']
 
             
             db.session.commit()
