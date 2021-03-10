@@ -81,14 +81,14 @@ class BlacklistToken(db.Model):
 
 class Restaurante(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement=True)
-    nombre = db.Column(db.Text(50), nullable=False)
-    lugar = db.Column(db.Text(200), nullable=False)
-    categoria = db.Column(db.Text(50), nullable=False) #revisar
-    direccion = db.Column(db.Text(250), nullable=False)
-    telefono = db.Column(db.Text(100), nullable=False)
-    logo_rest = db.Column(db.Text(200))
-    menu = db.Column(db.Text(200))
-    domicilio = db.Column(db.Text(300), nullable=False)
+    nombre = db.Column(db.Text, nullable=False)
+    lugar = db.Column(db.Text, nullable=False)
+    categoria = db.Column(db.Text, nullable=False) #revisar
+    direccion = db.Column(db.Text, nullable=False)
+    telefono = db.Column(db.Text, nullable=False)
+    logo_rest = db.Column(db.Text)
+    menu = db.Column(db.Text)
+    domicilio = db.Column(db.Text, nullable=False)
     #fecha_creacion = db.Column(db.DateTime, nullable=False) revisar
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'),nullable=False)

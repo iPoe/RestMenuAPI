@@ -12,7 +12,18 @@ from flask_marshmallow import Marshmallow
 from sqlalchemy import desc
 import base64
 
+from google.cloud import storage
+from os.path import join, dirname, realpath
+
 ma = Marshmallow(app)
+
+
+def push_to_bucket(source_file_name,destination_blob_name):
+    client = storage.Client.from_service_account_json("api-menu-key.json")
+    bucket = client.get_bucket('rest-menus')
+    blob = bucket.blob(destination_blob_name)
+    blob.upload_from_filename(source_file_name)    
+
 
 class Restaurante_Schema(ma.Schema):
     class Meta:
@@ -62,6 +73,10 @@ class RecursoListarRestaurantes(Resource):
             logo_r.save(os.path.join(app.config['UPLOAD_FOLDER'], logo_r.filename))
             logo_m = request.files['menu']
             logo_m.save(os.path.join(app.config['UPLOAD_FOLDER'], logo_m.filename))
+            #Guardar el menu en el bucket
+            push_to_bucket(app.config['UPLOAD_FOLDER']+logo_m.filename,logo_m.filename)
+            push_to_bucket(app.config['UPLOAD_FOLDER']+logo_r.filename,logo_r.filename)
+
             nuevo_restaurante = Restaurante(
                 nombre = request.form['nombre'],
                 lugar = request.form['lugar'],
