@@ -26,7 +26,7 @@ DB_URL = "postgres+psycopg2://postgres:{}@{}/{}".format(passw,ip,dbname)
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'my_precious')
+app.config['SECRET_KEY'] = getenv('SECRET_KEY', 'my_precious')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 api = Api(app)
